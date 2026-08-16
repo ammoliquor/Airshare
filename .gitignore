@@ -1,0 +1,27 @@
+# Dependency directories
+node_modules/
+
+# Ignore all user-uploaded files, but keep the uploads folder structure
+uploads/*
+!uploads/.gitkeep
+
+# OS metadata
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment variables & secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
