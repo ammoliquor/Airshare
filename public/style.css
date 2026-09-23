@@ -1,34 +1,87 @@
-/* CSS Design System using HSL colors - Premium Dark Theme */
+/* ==========================================================================
+   AirShare - Apple-Style Liquid Glass Design System
+   Inspired by macOS Sonoma / VisionOS & the Colorful Figma Dashboard Reference
+   ========================================================================== */
+
 :root {
-  --bg-primary: hsl(220, 18%, 10%);
-  --bg-secondary: hsl(220, 16%, 14%);
-  --bg-tertiary: hsl(220, 14%, 18%);
-  
-  --border-color: hsl(220, 12%, 22%);
-  --border-focus: hsl(150, 70%, 45%);
-  
-  --text-primary: hsl(210, 24%, 96%);
-  --text-secondary: hsl(210, 14%, 72%);
-  --text-muted: hsl(210, 10%, 52%);
-  
-  --accent: hsl(150, 75%, 46%); /* Premium Emerald Green for upload/success/speed */
-  --accent-hover: hsl(150, 80%, 38%);
-  --accent-light: hsla(150, 75%, 46%, 0.1);
-  --accent-light-border: hsla(150, 75%, 46%, 0.25);
-  
-  --danger: hsl(350, 80%, 55%);
-  --danger-hover: hsl(350, 85%, 48%);
-  --danger-light: hsla(350, 80%, 55%, 0.1);
-  
-  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.4);
+  /* Surface Canvas (Deep Midnight Obsidian) */
+  --bg-canvas: #090c15;
+  --bg-glass-panel: rgba(18, 24, 38, 0.72);
+  --bg-glass-card: rgba(14, 18, 29, 0.65);
+  --bg-glass-card-hover: rgba(24, 32, 50, 0.75);
+  --bg-glass-inset: rgba(9, 12, 20, 0.6);
+  --bg-glass-pill: rgba(255, 255, 255, 0.08);
+  --bg-glass-pill-hover: rgba(255, 255, 255, 0.14);
+
+  /* Glass Borders & Specular Edge Highlights */
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-subtle: rgba(255, 255, 255, 0.06);
+  --glass-border-focus: rgba(59, 130, 246, 0.65);
+  --glass-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.18);
+  --glass-highlight-card: inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+  --glass-backdrop-filter: blur(28px) saturate(190%);
+
+  /* Apple Vibrant Color Tokens (Reference UI Match) */
+  /* 1. Electric Sapphire Blue (Primary CTA, Video, Highlights) */
+  --apple-blue: #2f6bff;
+  --apple-blue-light: #4c82ff;
+  --apple-blue-dark: #1d4ed8;
+  --apple-blue-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  --apple-blue-glass-bg: rgba(47, 107, 255, 0.16);
+  --apple-blue-glass-border: rgba(47, 107, 255, 0.35);
+  --apple-blue-glow: 0 8px 24px -2px rgba(47, 107, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
+  /* 2. Sunset Coral / Neon Rose (Danger, Images, Important Alerts) */
+  --apple-coral: #f43f5e;
+  --apple-coral-light: #fb7185;
+  --apple-coral-gradient: linear-gradient(135deg, #fb7185 0%, #e11d48 100%);
+  --apple-coral-glass-bg: rgba(244, 63, 94, 0.15);
+  --apple-coral-glass-border: rgba(244, 63, 94, 0.32);
+  --apple-coral-glow: 0 8px 24px -2px rgba(244, 63, 94, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
+  /* 3. Warm Golden Amber (Documents, Folder Widgets, Highlights) */
+  --apple-amber: #f59e0b;
+  --apple-amber-light: #fbbf24;
+  --apple-amber-gradient: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  --apple-amber-glass-bg: rgba(245, 158, 11, 0.16);
+  --apple-amber-glass-border: rgba(245, 158, 11, 0.35);
+  --apple-amber-glow: 0 8px 24px -2px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
+  /* 4. Emerald Jade Mint (Success, Synced, Online, Archives) */
+  --apple-mint: #10b981;
+  --apple-mint-light: #34d399;
+  --apple-mint-gradient: linear-gradient(135deg, #34d399 0%, #059669 100%);
+  --apple-mint-glass-bg: rgba(16, 185, 129, 0.16);
+  --apple-mint-glass-border: rgba(16, 185, 129, 0.35);
+  --apple-mint-glow: 0 0 16px rgba(16, 185, 129, 0.55);
+
+  /* 5. Electric Purple / Magenta (Audio, Special Tags) */
+  --apple-purple: #8b5cf6;
+  --apple-purple-light: #a78bfa;
+  --apple-purple-gradient: linear-gradient(135deg, #a78bfa 0%, #6d28d9 100%);
+  --apple-purple-glass-bg: rgba(139, 92, 246, 0.16);
+  --apple-purple-glass-border: rgba(139, 92, 246, 0.35);
+  --apple-purple-glow: 0 8px 24px -2px rgba(139, 92, 246, 0.45);
+
+  /* Text & Typography */
+  --text-primary: #ffffff;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+
+  /* Spring Animations & Transitions */
+  --spring-fast: 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  --spring-normal: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  --spring-slow: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Elevated Shadows */
+  --shadow-panel: 0 24px 48px -12px rgba(0, 0, 0, 0.65), 0 8px 20px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 12px 28px -6px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-pill: 0 4px 14px rgba(0, 0, 0, 0.28);
 }
 
-/* Reset & Base styling */
+/* Reset & Base */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -36,411 +89,241 @@
 }
 
 body {
-  background-color: var(--bg-primary);
+  background-color: var(--bg-canvas);
   color: var(--text-primary);
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
   overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
 }
 
-/* Layout */
+/* ==========================================================================
+   Ambient Liquid Mesh Background (Apple VisionOS / macOS Ambient Light)
+   ========================================================================== */
+.ambient-glow-layer {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(95px);
+  opacity: 0.55;
+  will-change: transform;
+  animation: float-ambient 20s ease-in-out infinite alternate;
+}
+
+.orb-blue {
+  top: -10%;
+  left: 10%;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(47, 107, 255, 0.32) 0%, rgba(47, 107, 255, 0) 70%);
+}
+
+.orb-coral {
+  top: 18%;
+  right: -5%;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(244, 63, 94, 0.25) 0%, rgba(244, 63, 94, 0) 70%);
+  animation-delay: -5s;
+}
+
+.orb-amber {
+  bottom: 0%;
+  left: 20%;
+  width: 540px;
+  height: 540px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0) 70%);
+  animation-delay: -10s;
+}
+
+.orb-purple {
+  bottom: 15%;
+  right: 15%;
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.24) 0%, rgba(139, 92, 246, 0) 70%);
+  animation-delay: -15s;
+}
+
+@keyframes float-ambient {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -25px) scale(1.08); }
+  100% { transform: translate(-25px, 20px) scale(0.95); }
+}
+
+/* ==========================================================================
+   Layout Structure
+   ========================================================================== */
 .app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding: 1.5rem;
-  max-width: 1200px;
+  padding: 1.75rem;
+  max-width: 1240px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
-/* Header */
+/* ==========================================================================
+   Floating Liquid Glass Header
+   ========================================================================== */
 .app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 1.5rem;
+  background: var(--bg-glass-panel);
+  backdrop-filter: var(--glass-backdrop-filter);
+  -webkit-backdrop-filter: var(--glass-backdrop-filter);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-panel), var(--glass-highlight);
+  border-radius: 1.25rem;
   margin-bottom: 2rem;
 }
 
 .logo-area {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.85rem;
+}
+
+.logo-icon-badge {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(47, 107, 255, 0.22) 0%, rgba(139, 92, 246, 0.22) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 6px 18px rgba(47, 107, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border-radius: 0.85rem;
+  color: #ffffff;
+  flex-shrink: 0;
 }
 
 .logo-icon {
-  width: 2.25rem;
-  height: 2.25rem;
-  color: var(--accent);
+  width: 1.6rem;
+  height: 1.6rem;
 }
 
 .logo-text h1 {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.2;
+  color: #ffffff;
 }
 
 .logo-text p {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
-}
-
-.connection-status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: var(--bg-secondary);
-  padding: 0.5rem 1rem;
-  border-radius: 2rem;
-  border: 1px solid var(--border-color);
-  font-size: 0.85rem;
   font-weight: 500;
 }
 
+/* Connection Status Pill Badge */
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: var(--bg-glass-card);
+  padding: 0.5rem 1.15rem;
+  border-radius: 9999px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-pill), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  font-size: 0.82rem;
+  font-weight: 600;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
 .status-dot {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.6rem;
+  height: 0.6rem;
   border-radius: 50%;
   background-color: var(--text-muted);
+  transition: all var(--spring-normal);
+}
+
+.connection-status.connected {
+  border-color: var(--apple-mint-glass-border);
+  background: rgba(16, 185, 129, 0.08);
 }
 
 .connection-status.connected .status-dot {
-  background-color: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
-  animation: pulse-dot 2s infinite;
+  background-color: var(--apple-mint);
+  box-shadow: var(--apple-mint-glow);
+  animation: pulse-dot 2.5s infinite;
+}
+
+.connection-status.disconnected {
+  border-color: var(--apple-coral-glass-border);
+  background: rgba(244, 63, 94, 0.08);
 }
 
 .connection-status.disconnected .status-dot {
-  background-color: var(--danger);
-  box-shadow: 0 0 8px var(--danger);
+  background-color: var(--apple-coral);
+  box-shadow: 0 0 12px var(--apple-coral);
 }
 
 @keyframes pulse-dot {
   0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.7; }
+  50% { transform: scale(1.25); opacity: 0.75; }
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* Main Content Grid */
+/* ==========================================================================
+   Main Grid & Liquid Glass Panels
+   ========================================================================== */
 .app-main {
   display: grid;
-  grid-template-columns: 1.2fr 2fr;
+  grid-template-columns: 1.15fr 2fr;
   gap: 2rem;
   flex-grow: 1;
   align-items: start;
 }
 
-/* Card Panels */
 .panel {
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: var(--shadow-md);
+  background: var(--bg-glass-panel);
+  backdrop-filter: var(--glass-backdrop-filter);
+  -webkit-backdrop-filter: var(--glass-backdrop-filter);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-panel), var(--glass-highlight);
+  border-radius: 1.5rem;
+  padding: 1.75rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  position: relative;
+  transition: border-color var(--spring-normal), box-shadow var(--spring-normal);
 }
 
 .panel-header h2 {
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
   letter-spacing: -0.01em;
   margin-bottom: 0.25rem;
+  color: #ffffff;
 }
 
 .panel-header p {
   font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-
-/* QR Connection Section */
-.qr-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  background-color: var(--bg-tertiary);
-  padding: 1.5rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--border-color);
-}
-
-.qr-box {
-  background-color: white;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: var(--shadow-sm);
-  width: 100%;
-  max-width: 200px;
-  height: 200px;
-}
-
-#qr-canvas {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.connection-link {
-  font-size: 0.85rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
-  width: 100%;
-}
-
-.connection-link .link-label {
-  color: var(--text-muted);
-  font-size: 0.75rem;
-}
-
-.connection-link a {
-  color: var(--accent);
-  text-decoration: none;
-  font-family: monospace;
-  font-weight: 600;
-  word-break: break-all;
-  text-align: center;
-  transition: color var(--transition-fast);
-}
-
-.connection-link a:hover {
-  color: var(--accent-hover);
-}
-
-.instructions-card {
-  font-size: 0.85rem;
-  background-color: var(--bg-tertiary);
-  padding: 1rem 1.25rem;
-  border-radius: 0.75rem;
-  border-left: 3px solid var(--accent);
-}
-
-.instructions-card h3 {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.instructions-card ol {
-  padding-left: 1.2rem;
-  color: var(--text-secondary);
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-/* Drag and Drop Zone */
-.drop-zone {
-  border: 2px dashed var(--border-color);
-  background-color: var(--bg-tertiary);
-  border-radius: 0.75rem;
-  padding: 2.5rem 1.5rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.drop-zone:hover, .drop-zone.dragover {
-  border-color: var(--accent);
-  background-color: var(--accent-light);
-  box-shadow: 0 0 16px var(--accent-light);
-}
-
-.upload-icon {
-  width: 3rem;
-  height: 3rem;
-  color: var(--text-muted);
-  margin-bottom: 1rem;
-  transition: color var(--transition-normal), transform var(--transition-normal);
-}
-
-.drop-zone:hover .upload-icon, .drop-zone.dragover .upload-icon {
-  color: var(--accent);
-  transform: translateY(-4px);
-}
-
-.drop-zone .main-text {
-  font-weight: 600;
-  font-size: 1.05rem;
-  margin-bottom: 0.25rem;
-}
-
-.drop-zone .sub-text {
-  font-size: 0.85rem;
   color: var(--text-muted);
 }
 
-.drop-zone .highlight {
-  color: var(--accent);
-  font-weight: 500;
-  text-decoration: underline;
-}
-
-.upload-text-mobile {
-  display: none;
-}
-
-/* Real-time Progress Section */
-.progress-container {
-  background-color: var(--bg-tertiary);
-  border: 1px solid var(--accent-light-border);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  box-shadow: var(--shadow-sm);
-  animation: slide-down var(--transition-normal);
-}
-
-@keyframes slide-down {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.progress-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.file-details {
-  display: flex;
-  flex-direction: column;
-  max-width: 75%;
-}
-
-.file-name {
-  font-size: 0.9rem;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.transfer-speed {
-  font-size: 0.75rem;
-  color: var(--accent);
-  font-weight: 500;
-}
-
-.progress-percent {
-  font-size: 1.15rem;
-  font-weight: 700;
-  font-family: monospace;
-}
-
-.progress-bar-wrapper {
-  background-color: var(--bg-primary);
-  height: 6px;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.progress-bar-fill {
-  background-color: var(--accent);
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.1s ease;
-  box-shadow: 0 0 8px var(--accent);
-}
-
-.progress-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.time-remaining {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-/* Clipboard Shared Container */
-.clipboard-card {
-  background-color: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: 0.75rem;
-  overflow: hidden;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  background-color: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.card-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--text-primary);
-}
-
-.card-title h3 {
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.clipboard-status {
-  font-size: 0.7rem;
-  padding: 0.15rem 0.5rem;
-  background-color: var(--accent-light);
-  color: var(--accent);
-  border: 1px solid var(--accent-light-border);
-  border-radius: 1rem;
-  font-weight: 600;
-  opacity: 0;
-  transition: opacity var(--transition-fast);
-}
-
-.clipboard-status.active {
-  opacity: 1;
-}
-
-.clipboard-body textarea {
-  width: 100%;
-  height: 90px;
-  background-color: transparent;
-  border: none;
-  resize: none;
-  padding: 0.75rem 1rem;
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 0.85rem;
-  outline: none;
-}
-
-.clipboard-body textarea::placeholder {
-  color: var(--text-muted);
-}
-
-.clipboard-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: var(--bg-secondary);
-  border-top: 1px solid var(--border-color);
-}
-
-/* Buttons */
+/* ==========================================================================
+   Buttons (Apple-Style Pill Buttons from Reference UI)
+   ========================================================================== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -449,226 +332,203 @@ body {
   font-family: inherit;
   font-size: 0.85rem;
   font-weight: 600;
-  border-radius: 0.5rem;
+  border-radius: 9999px; /* Seamless Apple pill shape */
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  padding: 0.55rem 1.15rem;
+  min-height: 42px;
+  transition: all var(--spring-fast);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  text-decoration: none;
 }
 
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* Primary Button (Electric Sapphire Blue like "Create New task" in screenshot) */
 .btn-primary {
-  background-color: var(--accent);
-  color: var(--bg-primary);
+  background: var(--apple-blue-gradient);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: var(--apple-blue-glow);
 }
 
 .btn-primary:hover {
-  background-color: var(--accent-hover);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #4c82ff 0%, #2563eb 100%);
+  box-shadow: 0 10px 28px -2px rgba(47, 107, 255, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transform: translateY(-1.5px);
 }
 
+/* Secondary Button (Frosted Liquid Glass Pill) */
 .btn-secondary {
-  background-color: var(--bg-tertiary);
+  background: var(--bg-glass-pill);
   color: var(--text-primary);
-  border-color: var(--border-color);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-pill), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .btn-secondary:hover {
-  background-color: var(--border-color);
-  border-color: var(--text-muted);
+  background: var(--bg-glass-pill-hover);
+  border-color: rgba(255, 255, 255, 0.24);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
-.btn-small {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.75rem;
-}
-
+/* Danger Button (Frosted Sunset Coral Pill) */
 .btn-danger {
-  background-color: var(--danger-light);
-  color: var(--danger);
-  border-color: rgba(239, 68, 68, 0.2);
+  background: var(--apple-coral-glass-bg);
+  color: var(--apple-coral-light);
+  border: 1px solid var(--apple-coral-glass-border);
+  box-shadow: var(--shadow-pill);
 }
 
 .btn-danger:hover {
-  background-color: var(--danger);
-  color: white;
+  background: var(--apple-coral-gradient);
+  color: #ffffff;
+  box-shadow: var(--apple-coral-glow);
+  transform: translateY(-1.5px);
+}
+
+.btn-small {
+  padding: 0.38rem 0.88rem;
+  font-size: 0.78rem;
+  min-height: 34px;
+}
+
+/* Disabled button state (Strict WCAG calibrated neutral glass) */
+.btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .hidden {
   display: none !important;
 }
 
-/* Shared Files List */
-.files-list-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+/* ==========================================================================
+   Left Column: Connect Phone & PC Widgets
+   ========================================================================== */
 
-.files-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-}
-
-.header-left h2 {
-  font-size: 1.15rem;
-  font-weight: 600;
-}
-
-.files-count {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.header-right {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.files-list {
-  background-color: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: 0.75rem;
-  min-height: 250px;
-  max-height: 400px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Empty State */
-.empty-state {
+/* QR Container */
+.qr-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1.15rem;
+  background: var(--bg-glass-card);
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--glass-border-subtle);
+  box-shadow: var(--shadow-card), var(--glass-highlight-card);
+}
+
+.qr-box {
+  background-color: #ffffff;
+  padding: 0.85rem;
+  border-radius: 1rem;
+  display: flex;
   justify-content: center;
-  padding: 3rem 1.5rem;
-  text-align: center;
-  flex-grow: 1;
-  color: var(--text-muted);
-  gap: 0.75rem;
-}
-
-.empty-state svg {
-  width: 3.5rem;
-  height: 3.5rem;
-  stroke: var(--text-muted);
-}
-
-.empty-state p {
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.empty-state .sub-text {
-  font-size: 0.8rem;
-  max-width: 280px;
-  line-height: 1.4;
-}
-
-/* File items in list */
-.file-item {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-color);
-  transition: background-color var(--transition-fast);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  width: 100%;
+  max-width: 195px;
+  height: 195px;
+  transition: transform var(--spring-normal);
 }
 
-.file-item:last-child {
-  border-bottom: none;
+.qr-box:hover {
+  transform: scale(1.02);
 }
 
-.file-item:hover {
-  background-color: var(--bg-secondary);
-}
-
-.file-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  max-width: 70%;
-}
-
-.file-type-icon {
-  width: 2.25rem;
-  height: 2.25rem;
-  background-color: var(--bg-primary);
-  border-radius: 0.375rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-  flex-shrink: 0;
-}
-
-.file-type-icon svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-/* Specific icon colors by file types */
-.file-item.video .file-type-icon { color: hsl(200, 80%, 60%); }
-.file-item.image .file-type-icon { color: hsl(300, 70%, 65%); }
-.file-item.document .file-type-icon { color: hsl(35, 90%, 60%); }
-
-.file-meta {
+.connection-link {
+  font-size: 0.85rem;
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
 }
 
-.file-title {
-  font-size: 0.875rem;
+.connection-link .link-label {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.connection-link a {
+  color: var(--apple-blue-light);
+  text-decoration: none;
+  font-family: monospace;
+  font-size: 0.85rem;
   font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.file-size-date {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.file-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-/* Footer styling */
-.app-footer {
+  background: rgba(47, 107, 255, 0.12);
+  border: 1px solid rgba(47, 107, 255, 0.28);
+  padding: 0.38rem 0.9rem;
+  border-radius: 9999px;
+  word-break: break-all;
   text-align: center;
-  padding-top: 2rem;
-  padding-bottom: 1rem;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  border-top: 1px solid var(--border-color);
-  margin-top: 2rem;
+  transition: all var(--spring-fast);
+  box-shadow: 0 2px 8px rgba(47, 107, 255, 0.15);
 }
 
-/* PC Filepath Card */
+.connection-link a:hover {
+  background: rgba(47, 107, 255, 0.24);
+  border-color: var(--apple-blue);
+  box-shadow: 0 0 16px rgba(47, 107, 255, 0.4);
+}
+
+/* Instructions Card */
+.instructions-card {
+  font-size: 0.85rem;
+  background: var(--bg-glass-card);
+  padding: 1.15rem 1.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--glass-border-subtle);
+  border-left: 3px solid var(--apple-blue);
+  box-shadow: var(--shadow-card), var(--glass-highlight-card);
+}
+
+.instructions-card h3 {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.instructions-card ol {
+  padding-left: 1.2rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+/* Filepath Card & Download Folder Card */
 .filepath-card {
   font-size: 0.85rem;
-  background-color: var(--bg-tertiary);
-  padding: 1rem 1.25rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--border-color);
+  background: var(--bg-glass-card);
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--glass-border-subtle);
+  box-shadow: var(--shadow-card), var(--glass-highlight-card);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.65rem;
 }
 
 .filepath-card h3 {
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
+  color: #ffffff;
 }
 
 .filepath-card .card-subtitle {
@@ -684,63 +544,712 @@ body {
 
 .filepath-input-wrapper input {
   flex-grow: 1;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 0.375rem;
-  padding: 0.4rem 0.75rem;
-  color: var(--text-primary);
+  background: var(--bg-glass-inset);
+  border: 1px solid var(--glass-border);
+  border-radius: 9999px; /* Smooth pill input */
+  padding: 0.5rem 1rem;
+  color: #ffffff;
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   outline: none;
-  transition: border-color var(--transition-fast);
+  transition: all var(--spring-fast);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.filepath-input-wrapper input::placeholder {
+  color: var(--text-dim);
 }
 
 .filepath-input-wrapper input:focus {
-  border-color: var(--accent);
+  border-color: var(--apple-blue);
+  box-shadow: 0 0 0 3px rgba(47, 107, 255, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: rgba(10, 14, 24, 0.85);
 }
 
 .filepath-status {
   font-size: 0.75rem;
   font-weight: 500;
   min-height: 1.1rem;
-  transition: color var(--transition-fast);
+  transition: color var(--spring-fast);
 }
 
 .filepath-status.success {
-  color: var(--accent);
+  color: var(--apple-mint-light);
 }
 
 .filepath-status.error {
-  color: var(--danger);
+  color: var(--apple-coral-light);
 }
 
-/* Spinner Animation for Refresh Button */
+.filepath-status.info {
+  color: var(--apple-blue-light);
+}
+
+/* PC Download Folder Widget */
+.download-folder-card {
+  margin-top: 0.25rem;
+}
+
+.folder-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.current-folder-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--bg-glass-inset);
+  border: 1px solid var(--glass-border);
+  border-radius: 9999px;
+  padding: 0.45rem 0.85rem;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.folder-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--apple-amber-light);
+  background: var(--apple-amber-glass-bg);
+  border: 1px solid var(--apple-amber-glass-border);
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.current-folder-path {
+  font-size: 0.78rem;
+  font-family: monospace;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  direction: rtl;
+  text-align: left;
+}
+
+.folder-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.76rem;
+  margin-top: 0.15rem;
+}
+
+.text-link-btn {
+  background: none;
+  border: none;
+  color: var(--apple-blue-light);
+  font-size: 0.76rem;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--spring-fast);
+}
+
+.text-link-btn:hover {
+  color: #ffffff;
+}
+
+.action-divider {
+  color: var(--text-dim);
+}
+
+/* ==========================================================================
+   Center/Right Column: Transfer Control Center
+   ========================================================================== */
+
+/* Drop Zone */
+.drop-zone {
+  border: 2px dashed rgba(59, 130, 246, 0.38);
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.38) 0%, rgba(15, 23, 42, 0.62) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 1.35rem;
+  padding: 2.85rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--spring-normal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--apple-blue);
+  background: linear-gradient(180deg, rgba(47, 107, 255, 0.16) 0%, rgba(15, 23, 42, 0.75) 100%);
+  box-shadow: 0 0 36px -4px rgba(47, 107, 255, 0.4), inset 0 0 28px rgba(47, 107, 255, 0.14), var(--glass-highlight);
+  transform: translateY(-2px);
+}
+
+.upload-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  color: var(--apple-blue-light);
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(47, 107, 255, 0.16);
+  border: 1px solid rgba(47, 107, 255, 0.32);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(47, 107, 255, 0.35);
+  transition: all var(--spring-normal);
+}
+
+.drop-zone:hover .upload-icon, .drop-zone.dragover .upload-icon {
+  transform: translateY(-4px) scale(1.08);
+  background: var(--apple-blue-gradient);
+  color: #ffffff;
+  box-shadow: var(--apple-blue-glow);
+}
+
+.drop-zone .main-text {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+  color: #ffffff;
+}
+
+.drop-zone .sub-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.drop-zone .highlight {
+  color: var(--apple-blue-light);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.upload-text-mobile {
+  display: none;
+}
+
+/* ==========================================================================
+   Real-Time Progress Overlay
+   ========================================================================== */
+.progress-container {
+  background: var(--bg-glass-card);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  box-shadow: 0 10px 32px -4px rgba(47, 107, 255, 0.35), var(--glass-highlight);
+  border-radius: 1.25rem;
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  animation: slide-down 0.25s ease-out;
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.file-details {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.file-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transfer-speed {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--apple-blue-light);
+  background: var(--apple-blue-glass-bg);
+  border: 1px solid var(--apple-blue-glass-border);
+  padding: 0.15rem 0.65rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.progress-percent {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-bar-wrapper {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.progress-bar-fill {
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 50%, #a855f7 100%);
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.12s ease;
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.85);
+}
+
+.progress-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.time-remaining {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Shared Clipboard Card
+   ========================================================================== */
+.clipboard-card {
+  background: var(--bg-glass-card);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-card), var(--glass-highlight-card);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--glass-border-subtle);
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #ffffff;
+}
+
+.card-title svg {
+  color: var(--apple-amber-light);
+}
+
+.card-title h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.clipboard-status {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.75rem;
+  background: var(--apple-mint-glass-bg);
+  color: var(--apple-mint-light);
+  border: 1px solid var(--apple-mint-glass-border);
+  border-radius: 9999px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity var(--spring-fast);
+}
+
+.clipboard-status.active {
+  opacity: 1;
+  box-shadow: var(--apple-mint-glow);
+}
+
+.clipboard-body textarea {
+  width: 100%;
+  height: 90px;
+  background: var(--bg-glass-inset);
+  border: none;
+  resize: none;
+  padding: 0.85rem 1.25rem;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.85rem;
+  outline: none;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: border-color var(--spring-fast);
+}
+
+.clipboard-body textarea::placeholder {
+  color: var(--text-dim);
+}
+
+.clipboard-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-top: 1px solid var(--glass-border-subtle);
+}
+
+/* ==========================================================================
+   Shared Files Section (Matching the Reference UI Dashboard)
+   ========================================================================== */
+.files-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.files-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.header-left h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.files-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--apple-blue-light);
+  background: var(--apple-blue-glass-bg);
+  border: 1px solid var(--apple-blue-glass-border);
+  padding: 0.18rem 0.65rem;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(47, 107, 255, 0.2);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+/* Files List Container */
+.files-list {
+  background: var(--bg-glass-card);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 1.35rem;
+  min-height: 250px;
+  max-height: 440px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.85rem;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 1.5rem;
+  text-align: center;
+  flex-grow: 1;
+  color: var(--text-muted);
+  gap: 0.75rem;
+}
+
+.empty-state svg {
+  width: 3.5rem;
+  height: 3.5rem;
+  stroke: var(--text-dim);
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+.empty-state p {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+}
+
+.empty-state .sub-text {
+  font-size: 0.82rem;
+  max-width: 300px;
+  line-height: 1.45;
+  color: var(--text-dim);
+}
+
+/* ==========================================================================
+   File Items (Sleek Liquid Glass Cards with Vibrant Badges)
+   ========================================================================== */
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.15rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 1.15rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all var(--spring-fast);
+}
+
+.file-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1.5px);
+  box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  max-width: 68%;
+}
+
+.file-type-icon {
+  width: 2.65rem;
+  height: 2.65rem;
+  border-radius: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  transition: all var(--spring-fast);
+}
+
+.file-type-icon svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+/* Category Specific Vibrancy */
+.file-item.video .file-type-icon {
+  background: var(--apple-blue-glass-bg);
+  border-color: var(--apple-blue-glass-border);
+  color: var(--apple-blue-light);
+  box-shadow: 0 0 16px rgba(47, 107, 255, 0.35);
+}
+
+.file-item.image .file-type-icon {
+  background: var(--apple-coral-glass-bg);
+  border-color: var(--apple-coral-glass-border);
+  color: var(--apple-coral-light);
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.35);
+}
+
+.file-item.audio .file-type-icon {
+  background: var(--apple-purple-glass-bg);
+  border-color: var(--apple-purple-glass-border);
+  color: var(--apple-purple-light);
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.35);
+}
+
+.file-item.archive .file-type-icon {
+  background: var(--apple-mint-glass-bg);
+  border-color: var(--apple-mint-glass-border);
+  color: var(--apple-mint-light);
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.35);
+}
+
+.file-item.document .file-type-icon {
+  background: var(--apple-amber-glass-bg);
+  border-color: var(--apple-amber-glass-border);
+  color: var(--apple-amber-light);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+}
+
+.file-item.other .file-type-icon {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-secondary);
+}
+
+.file-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.file-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Category Pill Badge (Like "UI design" or "Ace logo" pills in screenshot) */
+.file-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.12rem 0.48rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.file-badge-video {
+  background: var(--apple-blue-glass-bg);
+  color: var(--apple-blue-light);
+  border: 1px solid var(--apple-blue-glass-border);
+}
+
+.file-badge-image {
+  background: var(--apple-coral-glass-bg);
+  color: var(--apple-coral-light);
+  border: 1px solid var(--apple-coral-glass-border);
+}
+
+.file-badge-audio {
+  background: var(--apple-purple-glass-bg);
+  color: var(--apple-purple-light);
+  border: 1px solid var(--apple-purple-glass-border);
+}
+
+.file-badge-archive {
+  background: var(--apple-mint-glass-bg);
+  color: var(--apple-mint-light);
+  border: 1px solid var(--apple-mint-glass-border);
+}
+
+.file-badge-document {
+  background: var(--apple-amber-glass-bg);
+  color: var(--apple-amber-light);
+  border: 1px solid var(--apple-amber-glass-border);
+}
+
+.file-badge-other {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.file-details-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Size Chip Badge */
+.file-size-chip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 0.1rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.file-date-text {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+/* ==========================================================================
+   Animations & Spinners
+   ========================================================================== */
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
 .spinning {
-  animation: spin 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: spin 0.65s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Responsive Styles */
-@media (max-width: 768px) {
+/* Custom Sleek Frosted Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* Footer */
+.app-footer {
+  text-align: center;
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  border-top: 1px solid var(--glass-border-subtle);
+  margin-top: 2rem;
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+@media (max-width: 860px) {
   .app-container {
-    padding: 1rem;
+    padding: 1.15rem;
   }
   
   .app-header {
-    margin-bottom: 1.25rem;
+    padding: 0.85rem 1.15rem;
+    margin-bottom: 1.5rem;
   }
   
   .app-main {
     grid-template-columns: 1fr;
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
   
   .desktop-panel {
-    display: none; /* Hide QR instructions panel on mobile browser */
+    display: none; /* Hide QR & PC helper on mobile phone browsers */
   }
   
   .desktop-only-btn {
@@ -748,7 +1257,7 @@ body {
   }
   
   .drop-zone {
-    padding: 2rem 1rem;
+    padding: 2.25rem 1rem;
   }
   
   .upload-text-desktop {
@@ -760,16 +1269,16 @@ body {
   }
   
   .upload-icon {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
   }
   
   .panel {
-    padding: 1.25rem;
-    gap: 1.25rem;
+    padding: 1.35rem;
+    gap: 1.35rem;
   }
   
   .clipboard-body textarea {
-    height: 70px;
+    height: 75px;
   }
 }

@@ -14,13 +14,23 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M12 2L2 22h20L12 2zm0 3.99L18.47 18H5.53L12 5.99zM13 16h-2v-2h2v2zm0-4h-2V9h2v3z'/></svg>">
 </head>
 <body>
+  <!-- Apple-Style Ambient Liquid Mesh (Vibrant background lights) -->
+  <div class="ambient-glow-layer" aria-hidden="true">
+    <div class="glow-orb orb-blue"></div>
+    <div class="glow-orb orb-coral"></div>
+    <div class="glow-orb orb-amber"></div>
+    <div class="glow-orb orb-purple"></div>
+  </div>
+
   <div class="app-container">
     <!-- Header -->
     <header class="app-header">
       <div class="logo-area">
-        <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/>
-        </svg>
+        <div class="logo-icon-badge">
+          <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/>
+          </svg>
+        </div>
         <div class="logo-text">
           <h1>AirShare</h1>
           <p>Local High-Speed Transfer</p>
@@ -38,8 +48,8 @@
       <!-- Left Column: PC / Desktop Only (QR & Connection Info) -->
       <section class="panel desktop-panel" id="desktop-panel">
         <div class="panel-header">
-          <h2>Connect iPhone</h2>
-          <p>Scan the code from your iPhone to send or download files instantly</p>
+          <h2>Connect Phone</h2>
+          <p>Scan the code from your phone to send or download files instantly</p>
         </div>
         
         <div class="qr-container">
@@ -56,8 +66,8 @@
         <div class="instructions-card">
           <h3>How to connect:</h3>
           <ol>
-            <li>Make sure your iPhone is on the <strong>same Wi-Fi network</strong> as this PC.</li>
-            <li>Open the native iOS Camera app and scan the QR code.</li>
+            <li>Make sure your phone is on the <strong>same Wi-Fi network</strong> as this PC.</li>
+            <li>Open your phone's Camera app and scan the QR code.</li>
             <li>Tap the link to open the transfer portal.</li>
           </ol>
         </div>
@@ -71,6 +81,31 @@
             <button class="btn btn-primary btn-small" id="pc-filepath-btn">Share</button>
           </div>
           <div id="pc-filepath-status" class="filepath-status"></div>
+        </div>
+
+        <!-- PC Download Folder Card (PC-only) -->
+        <div class="filepath-card download-folder-card">
+          <div class="folder-header-row">
+            <div>
+              <h3>PC Download Folder</h3>
+              <p class="card-subtitle">Where files sent to this PC are saved (default: Downloads)</p>
+            </div>
+          </div>
+          <div class="current-folder-box">
+            <span class="folder-label">Folder:</span>
+            <span class="current-folder-path" id="current-folder-path" title="Current download folder">Loading...</span>
+          </div>
+          <div class="filepath-input-wrapper">
+            <input type="text" id="pc-folder-input" placeholder="Enter PC path (default: Downloads)">
+            <button class="btn btn-secondary btn-small" id="pc-browse-folder-btn" title="Browse for folder on this PC">Browse...</button>
+            <button class="btn btn-primary btn-small" id="pc-save-folder-btn">Save</button>
+          </div>
+          <div class="folder-actions-row">
+            <button class="text-link-btn" id="pc-reset-folder-btn">Reset to Downloads</button>
+            <span class="action-divider">•</span>
+            <button class="text-link-btn" id="pc-open-folder-link-btn">Open in Explorer</button>
+          </div>
+          <div id="pc-folder-status" class="filepath-status"></div>
         </div>
       </section>
 
@@ -145,6 +180,14 @@
               <span class="files-count" id="files-count">0 files</span>
             </div>
             <div class="header-right">
+              <button class="btn btn-primary btn-small" id="download-all-btn" title="Download all files as ZIP" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Download All</span>
+              </button>
               <button class="btn btn-secondary btn-small desktop-only-btn" id="open-folder-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
@@ -176,7 +219,7 @@
                 <line x1="12" y1="12" x2="12" y2="18"></line>
               </svg>
               <p>No files transferred yet</p>
-              <span class="sub-text">Drag files here or select from iPhone to start transferring at maximum local speed.</span>
+              <span class="sub-text">Drag files here or select from your phone to start transferring at maximum local speed.</span>
             </div>
           </div>
         </div>

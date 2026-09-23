@@ -1,16 +1,22 @@
 # AirShare - High-Speed Local File Transfer
 
-AirShare is a web-based local file transfer utility designed to send videos, photos, documents, and text clipboard data between an iPhone (or Android phone) and a PC at maximum local network speed, without using the internet or any cloud services.
+AirShare is a web-based local file transfer utility designed to send videos, photos, documents, and text clipboard data between your phone (iOS or Android) and a PC at maximum local network speed, without using the internet or any cloud services.
+
+---
 
 ## 🚀 Features
 
 - **Extreme Local Speed**: Transfers files directly over your local Wi-Fi router. Standard 5GHz Wi-Fi can easily reach speeds between 30 MB/s to 90 MB/s+ depending on your router.
+- **Apple-Style Liquid Glass UI**: Modern translucent glassmorphism aesthetics with dynamic mesh gradient backdrops, frosted acrylic panels, smooth pill navigation, and responsive mobile-first reflow.
 - **100% Offline (Offline-First QR)**: The server generates the QR code locally as a Base64 data URL. No external CDNs are loaded, meaning the tool works flawlessly even without internet access.
 - **Bi-directional Transfer**: Send files from your phone to your PC, and drag-and-drop or paste files from your PC to your phone.
 - **Durable File Pasting**: Press `Ctrl+C` on any file or image on your PC (or select "Copy" on your phone) and press `Ctrl+V` on the page to upload it instantly.
 - **Shared Clipboard**: Instantly share text, URLs, and notes between devices with clear "Copy" and "Clear" actions.
-- **High-Speed Storage**: Streams files directly to disk chunk-by-chunk to prevent RAM congestion for large videos.
+- **One-Click "Download All"**: Download all shared files simultaneously packaged as a single high-speed `.zip` archive on phone or PC on the fly without intermediate disk inflation.
+- **Custom PC Download Folder**: Choose any destination folder on your PC for incoming transfers. Use the built-in Windows folder browser dialog or type a custom path—saved settings persist across server restarts in `config.json`.
+- **Session File Privacy & Protection**: Only files transferred through AirShare appear in the "Shared Files" section. Pre-existing files in your PC's download directory remain completely private and are shielded from accidental "Clear All" deletion.
 - **Real-Time Progress**: Displays active speed (MB/s), percentage complete, and ETA on both sender and receiver screens via WebSockets.
+- **Port Conflict & Zombie Process Recovery**: The launcher script automatically detects and frees stale port 3000 background instances before starting.
 
 ---
 
@@ -27,7 +33,9 @@ Before launching the server for the first time, download the required dependenci
    ```bash
    npm install
    ```
-   *This downloads the lightweight dependencies (`express` for the web server, `multer` for direct-to-disk file uploads, `ws` for live progress WebSockets, and `qrcode` for offline code generation).*
+   *This downloads the lightweight dependencies (`express`, `multer`, `ws`, `qrcode`, and `archiver`).*
+
+---
 
 ## 🚦 How to Run
 
@@ -44,67 +52,22 @@ Before launching the server for the first time, download the required dependenci
 3. **Start Sharing**:
    - **Send Files**: Drag and drop any file into the portal, click the drop zone to browse, or paste files directly from your clipboard (`Ctrl + V`).
    - **Shared Clipboard**: Paste or write text, then click **"Send to other device"** to sync. Use **"Copy Text"** to copy to your system clipboard silently (no highlights) or **"Clear"** to wipe the clipboard on all devices.
-   - **Manage Files**: Click **"Clear All"** on the files header to wipe all shared files from the PC, or click **"Open folder"** (PC only) to reveal the files in Windows Explorer.
+   - **Download All**: Click **"Download All"** to download all shared files in one click as a `.zip` archive.
+   - **Manage Files**: Click **"Clear All"** to wipe all shared files, or **"Open folder"** to reveal the active download folder in Windows Explorer.
+   - **Change Download Folder (PC)**: In the left desktop panel, click **"Browse..."** to select any folder on your PC using the native Windows folder picker, or type/paste a custom path and click **"Save"**.
 
 ---
 
 ## 🖥️ Creating a Windows Taskbar / Desktop Shortcut
 
-To launch AirShare with a single click without opening a terminal window, a PowerShell script [`create_shortcut.ps1`](create_shortcut.ps1) has been provided. 
+To launch AirShare with a single click without opening a terminal window, run the included PowerShell script [`create_shortcut.ps1`](create_shortcut.ps1):
 
-This script creates an **AirShare** shortcut on your Desktop with a custom networking icon.
-
-### To Run the Script Manually:
 1. Open PowerShell.
-2. Run the script from the project folder:
+2. Run:
    ```powershell
    powershell -ExecutionPolicy Bypass -File create_shortcut.ps1
    ```
-3. Locate the **AirShare** shortcut on your Desktop. Drag and drop it onto your **Taskbar** or right-click and select **Pin to Start** for instant access.
-
-*The script configuration is as follows:*
-```powershell
-$WshShell = New-Object -ComObject WScript.Shell
-$ScriptDir = $PSScriptRoot
-if ([string]::IsNullOrEmpty($ScriptDir)) { $ScriptDir = Get-Location }
-$DesktopPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath('Desktop'), 'AirShare.lnk')
-$Shortcut = $WshShell.CreateShortcut($DesktopPath)
-$Shortcut.TargetPath = "cmd.exe"
-$Shortcut.Arguments = "/c `"$ScriptDir\run.bat`""
-$Shortcut.WorkingDirectory = $ScriptDir
-$Shortcut.IconLocation = "shell32.dll,149" # Green network icon
-$Shortcut.Description = "Launch AirShare High-Speed File Transfer"
-$Shortcut.Save()
-```
-
----
-
-## 🐧 Linux User Trade-offs & Porting
-
-AirShare's core backend and web interfaces are fully compatible with Linux, but because the tool is customized for Windows out of the box, there are two minor trade-offs:
-
-1. **Auto-Open Browser Command**:
-   - *Windows code*: uses `start` command to launch the browser.
-   - *Linux behavior*: the command will fail silently at startup. You will have to open your browser manually and navigate to `http://localhost:3000`.
-2. **"Open folder" Command**:
-   - *Windows code*: launches `explorer.exe` to open the uploads folder.
-   - *Linux behavior*: clicking the "Open folder" button on a Linux host will do nothing because `explorer.exe` is not a Linux binary.
-
-### How to Port the Code to Linux:
-If you want to run this server on Linux, open [`server.js`](server.js) and make two small modifications:
-
-1. **Change the file manager command** (around line 276):
-   - Replace `explorer.exe` with `xdg-open` (or your file manager of choice, like `nautilus`):
-   ```diff
-   - exec(`explorer.exe "${winPath}"`, (err) => {
-   + exec(`xdg-open "${uploadsDir}"`, (err) => {
-   ```
-2. **Change the startup browser command** (around line 308):
-   - Replace `start` with `xdg-open` (or `open` on macOS):
-   ```diff
-   - exec(`start http://localhost:${PORT}`);
-   + exec(`xdg-open http://localhost:${PORT}`);
-   ```
+3. Locate the **AirShare** shortcut on your Desktop. You can drag and drop it onto your **Taskbar** or right-click and select **Pin to Start** for instant access.
 
 ---
 

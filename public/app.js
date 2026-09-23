@@ -31,11 +31,21 @@ const filesCount = document.getElementById('files-count');
 const refreshFilesBtn = document.getElementById('refresh-files-btn');
 const clearFilesBtn = document.getElementById('clear-files-btn');
 const openFolderBtn = document.getElementById('open-folder-btn');
+const downloadAllBtn = document.getElementById('download-all-btn');
 
 // PC Filepath elements
 const pcFilepathInput = document.getElementById('pc-filepath-input');
 const pcFilepathBtn = document.getElementById('pc-filepath-btn');
 const pcFilepathStatus = document.getElementById('pc-filepath-status');
+
+// PC Download Folder elements
+const currentFolderPath = document.getElementById('current-folder-path');
+const pcFolderInput = document.getElementById('pc-folder-input');
+const pcBrowseFolderBtn = document.getElementById('pc-browse-folder-btn');
+const pcSaveFolderBtn = document.getElementById('pc-save-folder-btn');
+const pcResetFolderBtn = document.getElementById('pc-reset-folder-btn');
+const pcOpenFolderLinkBtn = document.getElementById('pc-open-folder-link-btn');
+const pcFolderStatus = document.getElementById('pc-folder-status');
 
 // Global variables
 let socket = null;
@@ -75,6 +85,10 @@ function initWebSocket() {
       switch (message.type) {
         case 'init':
           handleInit(message.data);
+          break;
+        case 'config_update':
+          updateFolderUI(message);
+          loadFilesList();
           break;
         case 'progress':
           handleRemoteProgress(message);
@@ -132,6 +146,11 @@ function handleInit(data) {
       qrImage.src = data.qrDataURL;
     }
   }
+
+  // Update PC download folder if provided
+  if (data.downloadDir) {
+    updateFolderUI(data);
+  }
 }
 
 // Handle clipboard updates from WebSocket
@@ -184,6 +203,16 @@ async function loadFilesList() {
     // Update files count label
     filesCount.textContent = `${files.length} file${files.length !== 1 ? 's' : ''}`;
     
+    if (downloadAllBtn) {
+      if (files.length === 0) {
+        downloadAllBtn.disabled = true;
+        downloadAllBtn.title = 'No files to download';
+      } else {
+        downloadAllBtn.disabled = false;
+        downloadAllBtn.title = `Download all ${files.length} file${files.length !== 1 ? 's' : ''} as a ZIP archive`;
+      }
+    }
+    
     if (files.length === 0) {
       filesList.innerHTML = '';
       filesList.appendChild(filesEmptyState);
@@ -196,14 +225,17 @@ async function loadFilesList() {
     files.forEach(file => {
       const fileItem = document.createElement('div');
       
-      // Determine file class/icon based on extension
+      // Determine file class, label and icon
       const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
       let fileTypeClass = 'other';
+      let typeLabel = ext ? ext.replace('.', '').toUpperCase() : 'FILE';
       let iconSvg = '';
       
       const videoExts = ['.mp4', '.mov', '.mkv', '.avi', '.webm', '.3gp', '.m4v'];
       const imgExts = ['.jpg', '.jpeg', '.png', '.gif', '.heic', '.webp', '.svg', '.bmp'];
-      const docExts = ['.pdf', '.txt', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.zip', '.rar', '.7z', '.json'];
+      const audioExts = ['.mp3', '.wav', '.flac', '.m4a', '.aac', '.ogg'];
+      const archiveExts = ['.zip', '.rar', '.7z', '.tar', '.gz'];
+      const docExts = ['.pdf', '.txt', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.json', '.md'];
       
       if (videoExts.includes(ext)) {
         fileTypeClass = 'video';
@@ -211,6 +243,12 @@ async function loadFilesList() {
       } else if (imgExts.includes(ext)) {
         fileTypeClass = 'image';
         iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>`;
+      } else if (audioExts.includes(ext)) {
+        fileTypeClass = 'audio';
+        iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>`;
+      } else if (archiveExts.includes(ext)) {
+        fileTypeClass = 'archive';
+        iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>`;
       } else {
         fileTypeClass = 'document';
         iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
@@ -218,7 +256,7 @@ async function loadFilesList() {
       
       fileItem.className = `file-item ${fileTypeClass}`;
       
-      const fileDate = new Date(file.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' - ' + new Date(file.createdAt).toLocaleDateString();
+      const fileDate = new Date(file.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' • ' + new Date(file.createdAt).toLocaleDateString();
       
       fileItem.innerHTML = `
         <div class="file-info">
@@ -226,16 +264,22 @@ async function loadFilesList() {
             ${iconSvg}
           </div>
           <div class="file-meta">
-            <span class="file-title" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
-            <span class="file-size-date">${formatBytes(file.size)} • ${fileDate}</span>
+            <div class="file-title-row">
+              <span class="file-title" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
+              <span class="file-badge file-badge-${fileTypeClass}">${typeLabel}</span>
+            </div>
+            <div class="file-details-row">
+              <span class="file-size-chip">${formatBytes(file.size)}</span>
+              <span class="file-date-text">${fileDate}</span>
+            </div>
           </div>
         </div>
         <div class="file-actions">
           <a href="${file.url}" download="${encodeURIComponent(file.name)}" class="btn btn-secondary btn-small">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            Download
+            <span>Download</span>
           </a>
-          <button class="btn btn-danger btn-small delete-btn" data-filename="${encodeURIComponent(file.name)}">
+          <button class="btn btn-danger btn-small delete-btn" data-filename="${encodeURIComponent(file.name)}" title="Delete file">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
           </button>
         </div>
@@ -747,8 +791,195 @@ if (pcFilepathInput) {
   });
 }
 
+// Download all files as a ZIP archive
+if (downloadAllBtn) {
+  downloadAllBtn.addEventListener('click', () => {
+    if (downloadAllBtn.disabled) return;
+
+    const originalContent = downloadAllBtn.innerHTML;
+    downloadAllBtn.disabled = true;
+    downloadAllBtn.innerHTML = `
+      <svg class="spinning" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+      </svg>
+      <span>Downloading...</span>
+    `;
+
+    const link = document.createElement('a');
+    link.href = '/api/files/download-all';
+    link.setAttribute('download', '');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setTimeout(() => {
+      downloadAllBtn.innerHTML = originalContent;
+      downloadAllBtn.disabled = false;
+    }, 2500);
+  });
+}
+
+// PC Download Folder Management
+async function loadFolderConfig() {
+  try {
+    const res = await fetch('/api/config');
+    const data = await res.json();
+    updateFolderUI(data);
+  } catch (err) {
+    console.error('Failed to load folder configuration:', err);
+  }
+}
+
+function updateFolderUI(config) {
+  if (!config) return;
+  if (currentFolderPath && config.downloadDir) {
+    currentFolderPath.textContent = config.downloadDir;
+    currentFolderPath.title = config.downloadDir;
+  }
+  if (pcFolderInput && config.downloadDir && !pcFolderInput.value) {
+    pcFolderInput.placeholder = config.downloadDir;
+  }
+  if (pcResetFolderBtn) {
+    pcResetFolderBtn.style.display = config.isDefault ? 'none' : 'inline-block';
+  }
+}
+
+function showFolderStatus(msg, type) {
+  if (!pcFolderStatus) return;
+  pcFolderStatus.textContent = msg;
+  pcFolderStatus.className = 'filepath-status ' + type;
+  
+  if (type !== 'info') {
+    setTimeout(() => {
+      if (pcFolderStatus.textContent === msg) {
+        pcFolderStatus.textContent = '';
+        pcFolderStatus.className = 'filepath-status';
+      }
+    }, 4000);
+  }
+}
+
+async function saveDownloadFolder(newPath) {
+  if (!newPath || !newPath.trim()) {
+    showFolderStatus('Please enter a folder path', 'error');
+    return;
+  }
+
+  showFolderStatus('Updating download folder...', 'info');
+
+  try {
+    const res = await fetch('/api/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ downloadDir: newPath.trim() })
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      updateFolderUI(data);
+      if (pcFolderInput) pcFolderInput.value = '';
+      showFolderStatus('Download folder updated!', 'success');
+      loadFilesList();
+    } else {
+      showFolderStatus(data.error || 'Failed to update folder', 'error');
+    }
+  } catch (err) {
+    console.error('Error updating folder:', err);
+    showFolderStatus('Network error updating folder', 'error');
+  }
+}
+
+async function resetDownloadFolder() {
+  showFolderStatus('Resetting to default folder...', 'info');
+
+  try {
+    const res = await fetch('/api/config/reset', { method: 'POST' });
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      updateFolderUI(data);
+      if (pcFolderInput) pcFolderInput.value = '';
+      showFolderStatus('Reset to Downloads folder', 'success');
+      loadFilesList();
+    } else {
+      showFolderStatus(data.error || 'Failed to reset folder', 'error');
+    }
+  } catch (err) {
+    console.error('Error resetting folder:', err);
+    showFolderStatus('Network error resetting folder', 'error');
+  }
+}
+
+async function browsePCFolder() {
+  if (pcBrowseFolderBtn) {
+    pcBrowseFolderBtn.disabled = true;
+    pcBrowseFolderBtn.textContent = 'Browsing...';
+  }
+
+  showFolderStatus('Select folder in the Windows dialog on your PC...', 'info');
+
+  try {
+    const res = await fetch('/api/config/browse-folder', { method: 'POST' });
+    const data = await res.json();
+
+    if (data.success && data.selectedPath) {
+      await saveDownloadFolder(data.selectedPath);
+    } else if (data.cancelled) {
+      showFolderStatus('Folder selection cancelled', 'info');
+      setTimeout(() => {
+        if (pcFolderStatus && pcFolderStatus.textContent.includes('cancelled')) {
+          pcFolderStatus.textContent = '';
+          pcFolderStatus.className = 'filepath-status';
+        }
+      }, 2000);
+    } else if (data.error) {
+      showFolderStatus(data.error, 'error');
+    }
+  } catch (err) {
+    console.error('Error opening folder picker:', err);
+    showFolderStatus('Failed to open folder picker', 'error');
+  } finally {
+    if (pcBrowseFolderBtn) {
+      pcBrowseFolderBtn.disabled = false;
+      pcBrowseFolderBtn.textContent = 'Browse...';
+    }
+  }
+}
+
+// Event listeners for folder controls
+if (pcSaveFolderBtn && pcFolderInput) {
+  pcSaveFolderBtn.addEventListener('click', () => {
+    saveDownloadFolder(pcFolderInput.value);
+  });
+  pcFolderInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      saveDownloadFolder(pcFolderInput.value);
+    }
+  });
+}
+
+if (pcBrowseFolderBtn) {
+  pcBrowseFolderBtn.addEventListener('click', browsePCFolder);
+}
+
+if (pcResetFolderBtn) {
+  pcResetFolderBtn.addEventListener('click', resetDownloadFolder);
+}
+
+if (pcOpenFolderLinkBtn) {
+  pcOpenFolderLinkBtn.addEventListener('click', async () => {
+    try {
+      await fetch('/api/open-folder', { method: 'POST' });
+    } catch (err) {
+      console.error('Error opening folder on PC:', err);
+    }
+  });
+}
+
 // Main startup
 document.addEventListener('DOMContentLoaded', () => {
   initWebSocket();
   loadFilesList();
+  loadFolderConfig();
 });

@@ -25,3 +25,7 @@ pnpm-debug.log*
 .env.test.local
 .env.production.local
 .env.*.local
+
+# Local runtime data & config
+config.json
+shared_files.json
