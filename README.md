@@ -8,10 +8,9 @@ AirShare is a web-based local file transfer utility designed to send videos, pho
 
 - **Extreme Local Speed**: Transfers files directly over your local Wi-Fi router. Standard 5GHz Wi-Fi can easily reach speeds between 30 MB/s to 90 MB/s+ depending on your router.
 - **Apple-Style Liquid Glass UI**: Modern translucent glassmorphism aesthetics with dynamic mesh gradient backdrops, frosted acrylic panels, smooth pill navigation, and responsive mobile-first reflow.
-- **100% Offline (Offline-First QR)**: The server generates the QR code locally as a Base64 data URL. No external CDNs are loaded, meaning the tool works flawlessly even without internet access.
-- **Bi-directional Transfer**: Send files from your phone to your PC, and drag-and-drop or paste files from your PC to your phone.
-- **Durable File Pasting**: Press `Ctrl+C` on any file or image on your PC (or select "Copy" on your phone) and press `Ctrl+V` on the page to upload it instantly.
-- **Shared Clipboard**: Instantly share text, URLs, and notes between devices with clear "Copy" and "Clear" actions.
+- **100% Offline & Instant First-Paint**: Zero external CDNs or remote font dependencies. Uses native system typography and server-side state hydration (`__INITIAL_DATA__`) for instant, lag-free loading even on Wi-Fi networks without internet access.
+- **Bi-directional Transfer**: Send files seamlessly from your phone to your PC via native file picker sheets, and drag-and-drop or browse files on PC.
+- **Shared Clipboard**: Instantly share text, URLs, and code snippets across devices with one-tap "Paste", "Copy Text", and auto-synchronization.
 - **One-Click "Download All"**: Download all shared files simultaneously packaged as a single high-speed `.zip` archive on phone or PC on the fly without intermediate disk inflation.
 - **Custom PC Download Folder**: Choose any destination folder on your PC for incoming transfers. Use the built-in Windows folder browser dialog or type a custom path—saved settings persist across server restarts in `config.json`.
 - **Session File Privacy & Protection**: Only files transferred through AirShare appear in the "Shared Files" section. Pre-existing files in your PC's download directory remain completely private and are shielded from accidental "Clear All" deletion.
@@ -50,8 +49,8 @@ Before launching the server for the first time, download the required dependenci
    - Open your phone's camera (iOS or Android) and scan the QR code to open the portal.
 
 3. **Start Sharing**:
-   - **Send Files**: Drag and drop any file into the portal, click the drop zone to browse, or paste files directly from your clipboard (`Ctrl + V`).
-   - **Shared Clipboard**: Paste or write text, then click **"Send to other device"** to sync. Use **"Copy Text"** to copy to your system clipboard silently (no highlights) or **"Clear"** to wipe the clipboard on all devices.
+   - **Send Files**: Drag and drop any file into the portal on PC, or tap the drop zone on your phone to open the native file picker sheet.
+   - **Shared Clipboard**: Type or paste text into the box and click **"Send"** (or use the one-click **"Paste"** button). Click **"Copy Text"** to copy to your system clipboard, or **"Clear"** to wipe the shared clipboard across all devices.
    - **Download All**: Click **"Download All"** to download all shared files in one click as a `.zip` archive.
    - **Manage Files**: Click **"Clear All"** to wipe all shared files, or **"Open folder"** to reveal the active download folder in Windows Explorer.
    - **Change Download Folder (PC)**: In the left desktop panel, click **"Browse..."** to select any folder on your PC using the native Windows folder picker, or type/paste a custom path and click **"Save"**.

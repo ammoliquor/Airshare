@@ -4,11 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AirShare - High-Speed Local File Transfer</title>
-  <!-- Google Fonts: Plus Jakarta Sans for premium typography -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Style Sheet -->
+  <!-- Style Sheet (Instant native Apple system font stack) -->
   <link rel="stylesheet" href="style.css">
   <!-- Favicon (Inline SVG to avoid 404 and stay lightweight) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M12 2L2 22h20L12 2zm0 3.99L18.47 18H5.53L12 5.99zM13 16h-2v-2h2v2zm0-4h-2V9h2v3z'/></svg>">
@@ -36,9 +32,9 @@
           <p>Local High-Speed Transfer</p>
         </div>
       </div>
-      <div class="connection-status" id="connection-status">
+      <div class="connection-status connected" id="connection-status">
         <span class="status-dot"></span>
-        <span class="status-text">Connecting...</span>
+        <span class="status-text">Connected to Network</span>
       </div>
     </header>
 
@@ -163,12 +159,19 @@
             <span class="clipboard-status" id="clipboard-status">Synced</span>
           </div>
           <div class="clipboard-body">
-            <textarea id="clipboard-textarea" placeholder="Paste text/links, OR paste copied images/files directly here to upload them instantly..."></textarea>
+            <textarea id="clipboard-textarea" placeholder="Type or paste text/links to sync instantly across devices..."></textarea>
           </div>
           <div class="clipboard-footer">
-            <button class="btn btn-danger btn-small" id="clear-clipboard-btn">Clear</button>
+            <button class="btn btn-primary btn-small" id="paste-clipboard-btn" title="Paste text from clipboard">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              </svg>
+              Paste
+            </button>
             <button class="btn btn-secondary btn-small" id="copy-clipboard-btn">Copy Text</button>
-            <button class="btn btn-primary btn-small" id="send-clipboard-btn">Send to other device</button>
+            <button class="btn btn-secondary btn-small" id="send-clipboard-btn">Send</button>
+            <button class="btn btn-danger btn-small" id="clear-clipboard-btn">Clear</button>
           </div>
         </div>
 

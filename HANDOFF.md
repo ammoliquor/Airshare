@@ -23,10 +23,22 @@
 6. **Generalized Mobile Device Terminology:**
    - Replaced all platform-specific "iPhone" UI prompts, terminal messages, and instructions with neutral "phone" (e.g. "Connect Phone", "Scan this QR code with your phone", and "Open your phone's Camera app").
 
+7. **Zero-Latency Startup & 100% Offline Font Stack:**
+   - Eliminated external Google Fonts stylesheet requests that caused 3–5s delays when connected to local offline Wi-Fi.
+   - Migrated to native Apple/Windows system typography (`-apple-system, BlinkMacSystemFont, "SF Pro Display"`).
+   - Injected `window.__INITIAL_DATA__` directly on `GET /` in `server.js` for 0ms synchronous first paint without waiting for asynchronous API roundtrips.
+8. **Instant Mobile Touch Response & Compositor Tuning:**
+   - Added `touch-action: manipulation` and removed tap highlights to eliminate the standard mobile 300ms tap delay.
+   - Optimized mobile backdrop blur animations (`.glow-orb`) to eliminate WebKit compositor frame stalls on iOS Safari.
+9. **Streamlined Clipboard & Native File Uploads:**
+   - Removed experimental binary document clipboard parsing to respect iOS WebKit sandbox constraints; file uploads route reliably through native OS file pickers.
+   - Retained instant one-tap clipboard text/link synchronization with dedicated "Paste", "Copy Text", and "Send" controls.
+
 ## Active Invariants & Boundaries
 - Port: Default `3000`. Stale listeners are automatically pruned by `run.bat`.
 - State Tracking: Tracked files stored in `config.json` under `transferredFiles`.
 - Windows Execution: Commands run via PowerShell; batch scripts must avoid unescaped nested parentheses in parenthesized blocks.
+- Fonts & Offline First: Zero external assets or CDNs; all styles, fonts, and QR codes render purely locally.
 
 ## Recommended Next Steps
 - Verify end-to-end file transfers from mobile devices connected to the same Wi-Fi network.

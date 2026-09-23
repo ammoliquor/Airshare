@@ -199,8 +199,8 @@ function getActiveSharedFiles() {
 }
 
 // Middleware
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
 // Dynamically serve ONLY files that were transferred via AirShare
 app.use('/uploads', (req, res) => {
@@ -285,26 +285,74 @@ function getLocalIPAddress() {
 const localIP = getLocalIPAddress();
 const serverURL = `http://${localIP}:${PORT}`;
 
+// Pre-generate and cache QR code Data URL for instant delivery on connection
+let cachedQrDataURL = '';
+QRCode.toDataURL(serverURL, { margin: 1, width: 250 }, (err, url) => {
+  if (!err) cachedQrDataURL = url;
+});
+
+// Serve index.html with pre-injected initial state (0ms roundtrip instant rendering)
+app.get('/', (req, res) => {
+  const indexPath = path.join(__dirname, 'public', 'index.html');
+  fs.readFile(indexPath, 'utf8', (err, html) => {
+    if (err) {
+      return res.status(500).send('Error loading AirShare interface');
+    }
+
+    const activeFiles = getActiveSharedFiles();
+    const sorted = activeFiles.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const initialData = {
+      files: sorted,
+      clipboard: sharedClipboard,
+      downloadDir: getUploadsDir(),
+      defaultDir: DEFAULT_DOWNLOAD_DIR,
+      isDefault: getUploadsDir() === DEFAULT_DOWNLOAD_DIR,
+      serverURL: serverURL,
+      qrDataURL: cachedQrDataURL
+    };
+
+    const injection = `<script>window.__INITIAL_DATA__ = ${JSON.stringify(initialData)};</script>`;
+    const modifiedHtml = html.replace('</head>', `${injection}\n</head>`);
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(modifiedHtml);
+  });
+});
+
+// Serve static assets with fast caching
+app.use(express.static(path.join(__dirname, 'public'), {
+  index: false // Prevent serving raw index.html without hydration data
+}));
+
 // WebSocket connection handling
 const clients = new Set();
 
 wss.on('connection', (ws) => {
   clients.add(ws);
   
-  // Generate QR code Data URL for client side offline display
-  QRCode.toDataURL(serverURL, { margin: 1, width: 250 }, (err, qrDataURL) => {
-    ws.send(JSON.stringify({
-      type: 'init',
-      data: {
-        clipboard: sharedClipboard,
-        serverURL: serverURL,
-        qrDataURL: err ? '' : qrDataURL,
-        downloadDir: getUploadsDir(),
-        defaultDir: DEFAULT_DOWNLOAD_DIR,
-        isDefault: getUploadsDir() === DEFAULT_DOWNLOAD_DIR
-      }
-    }));
-  });
+  const sendInit = (qrUrl) => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: 'init',
+        data: {
+          clipboard: sharedClipboard,
+          serverURL: serverURL,
+          qrDataURL: qrUrl || '',
+          downloadDir: getUploadsDir(),
+          defaultDir: DEFAULT_DOWNLOAD_DIR,
+          isDefault: getUploadsDir() === DEFAULT_DOWNLOAD_DIR
+        }
+      }));
+    }
+  };
+
+  if (cachedQrDataURL) {
+    sendInit(cachedQrDataURL);
+  } else {
+    QRCode.toDataURL(serverURL, { margin: 1, width: 250 }, (err, qrDataURL) => {
+      if (!err) cachedQrDataURL = qrDataURL;
+      sendInit(err ? '' : qrDataURL);
+    });
+  }
 
   ws.on('message', (message) => {
     try {
