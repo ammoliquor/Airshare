@@ -11,9 +11,11 @@ AirShare is a web-based local file transfer utility designed to send videos, pho
 - **100% Offline & Instant First-Paint**: Zero external CDNs or remote font dependencies. Uses native system typography and server-side state hydration (`__INITIAL_DATA__`) for instant, lag-free loading even on Wi-Fi networks without internet access.
 - **Bi-directional Transfer**: Send files seamlessly from your phone to your PC via native file picker sheets, and drag-and-drop or browse files on PC.
 - **Shared Clipboard**: Instantly share text, URLs, and code snippets across devices with one-tap "Paste", "Copy Text", and auto-synchronization.
-- **One-Click "Download All"**: Download all shared files simultaneously packaged as a single high-speed `.zip` archive on phone or PC on the fly without intermediate disk inflation.
-- **Custom PC Download Folder**: Choose any destination folder on your PC for incoming transfers. Use the built-in Windows folder browser dialog or type a custom path—saved settings persist across server restarts in `config.json`.
-- **Session File Privacy & Protection**: Only files transferred through AirShare appear in the "Shared Files" section. Pre-existing files in your PC's download directory remain completely private and are shielded from accidental "Clear All" deletion.
+- **Hold, then Save (PC)**: Files sent to the PC are held in AirShare's private `uploads/` folder and listed under "Shared Files". Nothing is written to your chosen folder until you press **Save** on a file or **Save All to Folder**.
+- **Download / Download All (Phone)**: Phones and tablets get **Download** and **Download All** (one streamed `.zip`, no temporary file on disk). The PC shows Save instead, chosen by device detection rather than screen width.
+- **Custom PC Save Folder**: Choose any destination folder using the built-in Windows folder browser dialog or type a custom path. The setting persists across restarts in `config.json`. Switching folders never clears the Shared Files list, so files sent before you switch can simply be saved to the new folder.
+- **Shared Files Privacy**: Only files sent through AirShare appear in "Shared Files". Pre-existing files in your save folder are never listed, served, or deleted. **Clear All** empties the list and discards unsaved held copies; files already saved to a folder are never touched.
+- **Downloaded Checkmark**: A green tick appears beside a file once you have saved or downloaded it on that device (remembered per device in the browser).
 - **Real-Time Progress**: Displays active speed (MB/s), percentage complete, and ETA on both sender and receiver screens via WebSockets.
 - **Port Conflict & Zombie Process Recovery**: The launcher script automatically detects and frees stale port 3000 background instances before starting.
 
@@ -51,9 +53,10 @@ Before launching the server for the first time, download the required dependenci
 3. **Start Sharing**:
    - **Send Files**: Drag and drop any file into the portal on PC, or tap the drop zone on your phone to open the native file picker sheet.
    - **Shared Clipboard**: Type or paste text into the box and click **"Send"** (or use the one-click **"Paste"** button). Click **"Copy Text"** to copy to your system clipboard, or **"Clear"** to wipe the shared clipboard across all devices.
-   - **Download All**: Click **"Download All"** to download all shared files in one click as a `.zip` archive.
-   - **Manage Files**: Click **"Clear All"** to wipe all shared files, or **"Open folder"** to reveal the active download folder in Windows Explorer.
-   - **Change Download Folder (PC)**: In the left desktop panel, click **"Browse..."** to select any folder on your PC using the native Windows folder picker, or type/paste a custom path and click **"Save"**.
+   - **Save Files (PC)**: Files sent from your phone appear under "Shared Files" and are held until you click **Save** on a file or **Save All to Folder**, which copies them into the selected save folder.
+   - **Download Files (Phone)**: Tap **Download** on a file, or **Download All** for a single `.zip` archive.
+   - **Manage Files**: Click **"Clear All"** to empty the list (unsaved held files are discarded; saved files stay put), or **"Open folder"** to reveal the save folder in Windows Explorer.
+   - **Change Save Folder (PC)**: In the left desktop panel, click **"Browse..."** to select any folder on your PC using the native Windows folder picker, or type/paste a custom path and click **"Save"**. The Shared Files list is unaffected.
 
 ---
 
@@ -75,3 +78,5 @@ To launch AirShare with a single click without opening a terminal window, run th
 - All transfers occur strictly within your local network (LAN).
 - No data is sent to external servers or cloud services.
 - Safe offline storage on your local hardware.
+- PC-only administration endpoints (save to folder, change/reset save folder, folder browser, open folder, add by path) accept requests only from the PC itself (`localhost`); other devices on the network receive a 403.
+- There is no login or PIN: anyone on your Wi-Fi who opens the portal can send files, see Shared Files, read or change the shared clipboard, and clear the list. Avoid running AirShare on public or untrusted networks.
