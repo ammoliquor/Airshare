@@ -33,6 +33,7 @@ const refreshFilesBtn = document.getElementById('refresh-files-btn');
 const clearFilesBtn = document.getElementById('clear-files-btn');
 const openFolderBtn = document.getElementById('open-folder-btn');
 const downloadAllBtn = document.getElementById('download-all-btn');
+const saveAllBtn = document.getElementById('save-all-btn');
 
 // PC Filepath elements
 const pcFilepathInput = document.getElementById('pc-filepath-input');
@@ -138,7 +139,7 @@ function handleInit(data) {
   networkUrlText.textContent = data.serverURL;
 
   // Display QR Code if we are on a desktop (hide desktop panel on mobile)
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isMobile = document.documentElement.classList.contains('is-mobile');
   if (isMobile) {
     desktopPanel.style.display = 'none';
   } else {
@@ -196,12 +197,19 @@ function formatBytes(bytes, decimals = 2) {
 }
 
 // Render files list into DOM (instant 0ms operation)
+let currentFiles = [];
+
 function renderFilesList(files) {
+  currentFiles = files;
   if (!Array.isArray(files)) return;
   
   // Update files count label
   filesCount.textContent = `${files.length} file${files.length !== 1 ? 's' : ''}`;
   
+  if (saveAllBtn) {
+    saveAllBtn.disabled = files.length === 0;
+  }
+
   if (downloadAllBtn) {
     if (files.length === 0) {
       downloadAllBtn.disabled = true;
@@ -274,7 +282,14 @@ function renderFilesList(files) {
         </div>
       </div>
       <div class="file-actions">
-        <a href="${file.url}" download="${encodeURIComponent(file.name)}" class="btn btn-secondary btn-small">
+        <span class="downloaded-check" ${isDownloaded(file) ? '' : 'hidden'} title="Downloaded on this device" aria-label="Downloaded">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </span>
+        <button class="btn btn-secondary btn-small desktop-only-btn save-btn" title="Save to the selected PC folder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          <span>Save</span>
+        </button>
+        <a href="${file.url}" download="${encodeURIComponent(file.name)}" class="btn btn-secondary btn-small mobile-only-btn download-link">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           <span>Download</span>
         </a>
@@ -284,6 +299,34 @@ function renderFilesList(files) {
       </div>
     `;
     
+    fileItem.querySelector('.download-link').addEventListener('click', () => {
+      markDownloaded([file]);
+      fileItem.querySelector('.downloaded-check').hidden = false;
+    });
+
+    fileItem.querySelector('.save-btn').addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/files/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: file.name })
+        });
+        if (res.ok) {
+          markDownloaded([file]);
+          fileItem.querySelector('.downloaded-check').hidden = false;
+          btn.querySelector('span').textContent = 'Saved';
+        } else {
+          btn.disabled = false;
+          alert('Could not save the file to the folder.');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        console.error('Failed to save file', err);
+      }
+    });
+
     filesList.appendChild(fileItem);
   });
   
@@ -707,10 +750,37 @@ refreshFilesBtn.addEventListener('click', async () => {
   }, 600);
 });
 
+// Downloaded-file tracking (per device, kept in localStorage)
+const DOWNLOADED_KEY = 'airshare.downloaded';
+
+function downloadKey(file) {
+  return `${file.name}|${file.createdAt}`;
+}
+
+function loadDownloaded() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(DOWNLOADED_KEY)) || []);
+  } catch (e) {
+    return new Set();
+  }
+}
+
+function isDownloaded(file) {
+  return loadDownloaded().has(downloadKey(file));
+}
+
+function markDownloaded(list) {
+  try {
+    const set = loadDownloaded();
+    list.forEach(f => set.add(downloadKey(f)));
+    localStorage.setItem(DOWNLOADED_KEY, JSON.stringify([...set].slice(-500)));
+  } catch (e) {}
+}
+
 // Clear all files button
 if (clearFilesBtn) {
   clearFilesBtn.addEventListener('click', async () => {
-    if (confirm('Delete all shared files permanently from PC?')) {
+    if (confirm('Clear the Shared Files list? Files not yet saved to a folder will be discarded; saved files stay where they are.')) {
       try {
         const res = await fetch('/api/files/clear', { method: 'POST' });
         if (res.ok) {
@@ -720,6 +790,30 @@ if (clearFilesBtn) {
         console.error('Failed to clear shared files:', err);
       }
     }
+  });
+}
+
+// Save all held files into the selected PC folder (PC only)
+if (saveAllBtn) {
+  saveAllBtn.addEventListener('click', async () => {
+    if (saveAllBtn.disabled) return;
+    saveAllBtn.disabled = true;
+    try {
+      const res = await fetch('/api/files/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ all: true })
+      });
+      if (res.ok) {
+        markDownloaded(currentFiles);
+        document.querySelectorAll('.downloaded-check').forEach(el => { el.hidden = false; });
+      } else {
+        alert('Could not save the files to the folder.');
+      }
+    } catch (err) {
+      console.error('Failed to save files', err);
+    }
+    saveAllBtn.disabled = currentFiles.length === 0;
   });
 }
 
@@ -856,6 +950,9 @@ if (downloadAllBtn) {
       </svg>
       <span>Downloading...</span>
     `;
+
+    markDownloaded(currentFiles);
+    document.querySelectorAll('.downloaded-check').forEach(el => { el.hidden = false; });
 
     const link = document.createElement('a');
     link.href = '/api/files/download-all';

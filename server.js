@@ -27,6 +27,8 @@ const wss = new WebSocket.Server({ server });
 const PORT = 3000;
 const CONFIG_FILE = path.join(__dirname, 'config.json');
 const SHARED_FILES_MANIFEST = path.join(__dirname, 'shared_files.json');
+// Incoming files are held here until the user saves them to the chosen PC folder.
+const STAGING_DIR = path.resolve(path.join(__dirname, 'uploads'));
 
 // Default download folder is the PC's native Downloads folder
 function getDefaultDownloadDir() {
@@ -108,7 +110,8 @@ function loadSharedFiles() {
     if (fs.existsSync(SHARED_FILES_MANIFEST)) {
       const data = JSON.parse(fs.readFileSync(SHARED_FILES_MANIFEST, 'utf8'));
       if (Array.isArray(data)) {
-        return data;
+        // Entries from older versions pointed at user folders; only staged files are tracked now.
+        return data.filter(item => item.folder && path.resolve(item.folder) === STAGING_DIR);
       }
     }
   } catch (err) {
@@ -127,8 +130,18 @@ function saveSharedFiles(files) {
 
 let sharedFilesList = loadSharedFiles();
 
+// Drop list entries for a folder (files on disk are untouched). Used when switching
+// folders so the Shared Files list only shows files sent after the switch.
+function forgetSharedFilesIn(folder) {
+  const target = path.resolve(folder);
+  sharedFilesList = sharedFilesList.filter(
+    (item) => path.resolve(item.folder || target) !== target
+  );
+  saveSharedFiles(sharedFilesList);
+}
+
 function registerSharedFile(filename, size, folder) {
-  const targetFolder = path.resolve(folder || getUploadsDir());
+  const targetFolder = path.resolve(folder || STAGING_DIR);
   // Remove existing entry if re-uploaded
   sharedFilesList = sharedFilesList.filter(
     (item) => !(item.name === filename && path.resolve(item.folder || targetFolder) === targetFolder)
@@ -147,7 +160,7 @@ function registerSharedFile(filename, size, folder) {
 }
 
 function unregisterSharedFile(filename, folder) {
-  const targetFolder = path.resolve(folder || getUploadsDir());
+  const targetFolder = path.resolve(folder || STAGING_DIR);
   sharedFilesList = sharedFilesList.filter(
     (item) => !(item.name === filename && path.resolve(item.folder || targetFolder) === targetFolder)
   );
@@ -155,7 +168,7 @@ function unregisterSharedFile(filename, folder) {
 }
 
 function getActiveSharedFiles() {
-  const currentDir = path.resolve(getUploadsDir());
+  const currentDir = path.resolve(STAGING_DIR);
   const active = [];
   let modified = false;
 
@@ -202,11 +215,21 @@ function getActiveSharedFiles() {
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ limit: '100mb', extended: true }));
 
+// Restrict PC-administration endpoints to requests originating from this machine.
+// Uses the raw socket address (not req.ip / X-Forwarded-For) so it cannot be spoofed.
+function localOnly(req, res, next) {
+  const addr = req.socket.remoteAddress;
+  if (addr === '127.0.0.1' || addr === '::1' || addr === '::ffff:127.0.0.1') {
+    return next();
+  }
+  res.status(403).json({ error: 'This action is only available from the PC running AirShare' });
+}
+
 // Dynamically serve ONLY files that were transferred via AirShare
 app.use('/uploads', (req, res) => {
   const decodedPath = decodeURI(req.path);
   const safeFilename = path.basename(decodedPath);
-  const currentDir = path.resolve(getUploadsDir());
+  const currentDir = path.resolve(STAGING_DIR);
 
   // Security check: only allow serving files explicitly registered in AirShare!
   const activeFiles = getActiveSharedFiles();
@@ -234,12 +257,12 @@ let sharedClipboard = '';
 // Multer dynamic storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = getUploadsDir();
+    const dir = STAGING_DIR;
     ensureDirSync(dir);
     cb(null, dir);
   },
   filename: (req, file, cb) => {
-    const dir = getUploadsDir();
+    const dir = STAGING_DIR;
     let name = file.originalname;
     const ext = path.extname(name);
     const base = path.basename(name, ext);
@@ -402,7 +425,7 @@ app.get('/api/files', (req, res) => {
 
 // Download all files as a single ZIP archive (only includes shared files!)
 app.get('/api/files/download-all', (req, res) => {
-  const currentDir = path.resolve(getUploadsDir());
+  const currentDir = path.resolve(STAGING_DIR);
   const activeFiles = getActiveSharedFiles();
 
   if (activeFiles.length === 0) {
@@ -448,7 +471,7 @@ app.post('/api/upload', upload.array('files'), (req, res) => {
     return res.status(400).json({ error: 'No files uploaded' });
   }
 
-  const currentDir = path.resolve(getUploadsDir());
+  const currentDir = path.resolve(STAGING_DIR);
   const uploadedFiles = req.files.map(file => {
     registerSharedFile(file.filename, file.size, currentDir);
     return {
@@ -469,7 +492,7 @@ app.post('/api/upload', upload.array('files'), (req, res) => {
 });
 
 // Add local file by path endpoint
-app.post('/api/add-by-path', (req, res) => {
+app.post('/api/add-by-path', localOnly, (req, res) => {
   let { filepath } = req.body;
   if (!filepath) {
     return res.status(400).json({ error: 'Filepath is required' });
@@ -488,7 +511,7 @@ app.post('/api/add-by-path', (req, res) => {
       return res.status(400).json({ error: 'Specified path is a directory, not a file' });
     }
 
-    const currentDir = path.resolve(getUploadsDir());
+    const currentDir = path.resolve(STAGING_DIR);
     let originalName = path.basename(filepath);
     const ext = path.extname(originalName);
     const base = path.basename(originalName, ext);
@@ -530,7 +553,7 @@ app.post('/api/add-by-path', (req, res) => {
 // Delete specific file endpoint
 app.delete('/api/files/:filename', (req, res) => {
   const filename = path.basename(req.params.filename);
-  const currentDir = path.resolve(getUploadsDir());
+  const currentDir = path.resolve(STAGING_DIR);
   const filePath = path.join(currentDir, filename);
 
   unregisterSharedFile(filename, currentDir);
@@ -549,41 +572,62 @@ app.delete('/api/files/:filename', (req, res) => {
   }
 });
 
-// Clear shared files endpoint (ONLY deletes files that were shared via AirShare!)
+// Clear shared files endpoint: empties the Shared Files list and discards the held
+// (unsaved) copies. Files already saved to a PC folder are never touched.
 app.post('/api/files/clear', (req, res) => {
-  const currentDir = path.resolve(getUploadsDir());
   const activeFiles = getActiveSharedFiles();
 
-  let deleteErrors = 0;
-  let deletedCount = 0;
-
   activeFiles.forEach((file) => {
-    const filePath = path.join(currentDir, file.name);
     try {
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-        deletedCount++;
-      }
-    } catch (unlinkErr) {
-      console.error(`Failed to delete ${file.name}:`, unlinkErr);
-      deleteErrors++;
+      fs.unlinkSync(path.join(STAGING_DIR, file.name));
+    } catch (err) {
+      console.warn(`Could not remove held file ${file.name}:`, err.message);
     }
   });
 
-  // Remove active files from shared registry
-  sharedFilesList = sharedFilesList.filter(item => path.resolve(item.folder || currentDir) !== currentDir);
-  saveSharedFiles(sharedFilesList);
+  forgetSharedFilesIn(STAGING_DIR);
 
-  // Broadcast updated file list (empty)
   broadcast({
     type: 'files_uploaded',
     files: []
   });
 
-  if (deleteErrors > 0) {
-    res.status(500).json({ error: `Deleted ${deletedCount} files, but failed to delete ${deleteErrors} files` });
-  } else {
-    res.json({ success: true, count: deletedCount });
+  res.json({ success: true, count: activeFiles.length });
+});
+
+// Save held files into the currently selected PC folder (PC only).
+// Body: { name } to save one file, or { all: true } to save every shared file.
+app.post('/api/files/save', localOnly, (req, res) => {
+  const { name, all } = req.body || {};
+  const active = getActiveSharedFiles();
+  const targets = all ? active : active.filter(f => f.name === name);
+
+  if (targets.length === 0) {
+    return res.status(404).json({ error: 'File not found in Shared Files' });
+  }
+
+  const destDir = path.resolve(getUploadsDir());
+  const saved = [];
+  try {
+    ensureDirSync(destDir);
+    for (const file of targets) {
+      const ext = path.extname(file.name);
+      const base = path.basename(file.name, ext);
+      let finalName = file.name;
+      let dest = path.join(destDir, finalName);
+      let counter = 1;
+      while (fs.existsSync(dest)) {
+        finalName = `${base} (${counter})${ext}`;
+        dest = path.join(destDir, finalName);
+        counter++;
+      }
+      fs.copyFileSync(path.join(STAGING_DIR, file.name), dest);
+      saved.push({ name: file.name, savedAs: finalName });
+    }
+    res.json({ success: true, folder: destDir, saved });
+  } catch (err) {
+    console.error('Error saving files to folder:', err);
+    res.status(500).json({ error: 'Failed to save: ' + err.message, saved });
   }
 });
 
@@ -596,7 +640,7 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-app.post('/api/config', (req, res) => {
+app.post('/api/config', localOnly, (req, res) => {
   const { downloadDir } = req.body;
   if (!downloadDir || typeof downloadDir !== 'string' || downloadDir.trim() === '') {
     return res.status(400).json({ error: 'Folder path is required' });
@@ -626,7 +670,7 @@ app.post('/api/config', (req, res) => {
   }
 });
 
-app.post('/api/config/reset', (req, res) => {
+app.post('/api/config/reset', localOnly, (req, res) => {
   try {
     const updated = resetUploadsDir();
     broadcast({
@@ -651,7 +695,7 @@ app.post('/api/config/reset', (req, res) => {
 });
 
 // Windows Folder Browser Dialog endpoint
-app.post('/api/config/browse-folder', (req, res) => {
+app.post('/api/config/browse-folder', localOnly, (req, res) => {
   if (os.platform() !== 'win32') {
     return res.status(400).json({ error: 'Folder browser dialog is only supported on Windows' });
   }
@@ -699,7 +743,7 @@ app.post('/api/clipboard', (req, res) => {
 });
 
 // Open local folder endpoint (reveals active download folder in Explorer)
-app.post('/api/open-folder', (req, res) => {
+app.post('/api/open-folder', localOnly, (req, res) => {
   const currentDir = getUploadsDir();
   const winPath = currentDir.replace(/\//g, '\\');
   exec(`explorer.exe "${winPath}"`, (err) => {

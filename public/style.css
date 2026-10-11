@@ -1258,9 +1258,6 @@ body {
     display: none; /* Hide QR & PC helper on mobile phone browsers */
   }
   
-  .desktop-only-btn {
-    display: none !important;
-  }
   
   .drop-zone {
     padding: 2.25rem 1rem;
@@ -1293,4 +1290,27 @@ body {
     filter: blur(40px) !important;
     opacity: 0.35 !important;
   }
+}
+
+.downloaded-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a9d55;
+  margin-right: 6px;
+}
+.downloaded-check[hidden] {
+  display: none;
+}
+
+/* Device-based (not width-based) visibility; <html class="is-mobile"> is set by device detection.
+   Download buttons are only needed on phones; the PC uses Save to write into its folder. */
+.mobile-only-btn {
+  display: none;
+}
+.is-mobile .desktop-only-btn {
+  display: none !important;
+}
+.is-mobile .mobile-only-btn {
+  display: inline-flex;
 }

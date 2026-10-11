@@ -8,6 +8,15 @@
   <link rel="stylesheet" href="style.css">
   <!-- Favicon (Inline SVG to avoid 404 and stay lightweight) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M12 2L2 22h20L12 2zm0 3.99L18.47 18H5.53L12 5.99zM13 16h-2v-2h2v2zm0-4h-2V9h2v3z'/></svg>">
+  <script>
+    // Device detection (not screen width): phones/tablets get Download, the PC gets Save.
+    (function () {
+      var ua = navigator.userAgent;
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(ua) ||
+        (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1); // iPadOS reports as a Mac
+      if (isMobile) document.documentElement.classList.add('is-mobile');
+    })();
+  </script>
 </head>
 <body>
   <!-- Apple-Style Ambient Liquid Mesh (Vibrant background lights) -->
@@ -183,13 +192,21 @@
               <span class="files-count" id="files-count">0 files</span>
             </div>
             <div class="header-right">
-              <button class="btn btn-primary btn-small" id="download-all-btn" title="Download all files as ZIP" disabled>
+              <button class="btn btn-primary btn-small mobile-only-btn" id="download-all-btn" title="Download all files as ZIP" disabled>
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                   <polyline points="7 10 12 15 17 10"></polyline>
                   <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
                 <span>Download All</span>
+              </button>
+              <button class="btn btn-primary btn-small desktop-only-btn" id="save-all-btn" title="Save all files into the selected PC folder" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                <span>Save All to Folder</span>
               </button>
               <button class="btn btn-secondary btn-small desktop-only-btn" id="open-folder-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
